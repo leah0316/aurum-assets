@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>아우룸클럽 갤러리 시안 2</title>
+<style>body{margin:0;background:#050505;}</style>
+</head><body>
+<!-- ============================================================
+  아우룸클럽 갤러리 (시안 2: 카드 2장 → 클릭하면 모달로 사진/영상 모음)
+  아래 <style>부터 마지막 </script>까지가 아임웹 HTML 위젯에 넣을 부분이에요.
+  ※ 사진·영상은 예시예요. 실제 사진 주소/영상 주소로 바꾸면 돼요.
+============================================================ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Noto+Serif+KR:wght@300;400;500&display=swap');
+.aurg2-root{--gold:#c9a961;--gold-bright:#e7c87a;--ivory:#f5f1e6;position:relative;width:100%;background:#050505;border-top:1px solid rgba(201,169,97,.1);
+  padding:96px 0;font-family:"Noto Serif KR",serif;color:var(--ivory);-webkit-font-smoothing:antialiased;}
+.aurg2-root *,.aurg2-modal *{box-sizing:border-box;margin:0;padding:0;}
+.aurg2-in{max-width:1280px;margin:0 auto !important;padding:0 24px !important;}
+.aurg2-disp{font-family:"Cormorant Garamond","Noto Serif KR","Times New Roman",serif !important;letter-spacing:.04em !important;}
+.aurg2-kr{font-family:"Noto Serif KR",serif !important;}
+.aurg2-head{display:flex;flex-direction:column;align-items:center;text-align:center;}
+.aurg2-eye{font-size:10px !important;line-height:15px !important;letter-spacing:.6em !important;color:var(--gold) !important;}
+.aurg2-dash{margin:20px 0 !important;height:1px;width:48px;background:var(--gold);}
+.aurg2-h2{font-size:36px !important;line-height:40px !important;font-weight:300 !important;color:var(--ivory) !important;}
+.aurg2-subt{margin-top:12px !important;font-size:11px !important;line-height:16px !important;letter-spacing:.45em !important;color:rgba(245,241,230,.4) !important;}
+.aurg2-lead{max-width:672px;margin:56px auto 0 !important;text-align:center;font-size:15px !important;line-height:2 !important;color:rgba(245,241,230,.7) !important;}
+
+/* ---------- 카드 2장 ---------- */
+.aurg2-cards{max-width:1024px;margin:48px auto 0 !important;display:grid;gap:1px;background:rgba(201,169,97,.18);border:1px solid rgba(201,169,97,.18);}
+.aurg2-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:380px;padding:64px 32px 48px !important;
+  background:#050505;cursor:pointer;overflow:hidden;border:0;color:inherit;font:inherit;transition:background-color .6s ease;outline:none;-webkit-tap-highlight-color:transparent;}
+.aurg2-card::before{content:"";position:absolute;inset:14px;border:1px solid rgba(231,200,122,0);pointer-events:none;transition:border-color .7s ease,inset .7s cubic-bezier(.16,1,.3,1);}
+.aurg2-card::after{content:"";position:absolute;left:50%;top:34%;width:340px;height:340px;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(201,169,97,.14) 0%,transparent 65%);opacity:0;transition:opacity .8s ease;}
+.aurg2-card:hover{background:#0a0a0a;}
+.aurg2-card:hover::before{border-color:rgba(231,200,122,.45);inset:20px;}
+.aurg2-card:hover::after{opacity:1;}
+.aurg2-no{position:absolute;left:32px;top:28px;font-size:48px !important;line-height:1 !important;color:rgba(201,169,97,.3) !important;transition:color .6s ease;}
+.aurg2-card:hover .aurg2-no{color:rgba(201,169,97,.7) !important;}
+.aurg2-icon{position:relative;z-index:1;width:64px;height:64px;color:var(--gold);transition:transform .8s cubic-bezier(.16,1,.3,1),color .6s;}
+.aurg2-icon svg{display:block;width:100%;height:100%;}
+.aurg2-card:hover .aurg2-icon{transform:translateY(-4px);color:var(--gold-bright);}
+.aurg2-lab{position:relative;margin-top:32px !important;font-size:10px !important;line-height:15px !important;letter-spacing:.5em !important;color:var(--gold) !important;}
+.aurg2-tit{position:relative;margin-top:10px !important;font-size:28px !important;line-height:1.3 !important;font-weight:400 !important;color:var(--ivory) !important;}
+.aurg2-desc{position:relative;margin-top:16px !important;max-width:300px;font-size:13px !important;line-height:1.75 !important;color:rgba(245,241,230,.55) !important;}
+.aurg2-cnt{position:relative;margin-top:20px !important;font-size:12px !important;letter-spacing:.3em !important;color:rgba(201,169,97,.75) !important;font-style:italic;}
+.aurg2-cta{position:relative;margin-top:auto !important;padding-top:36px !important;display:inline-flex;align-items:center;gap:14px;font-size:10px !important;letter-spacing:.45em !important;color:rgba(245,241,230,.7) !important;transition:color .5s;}
+.aurg2-cta i{display:block;width:28px;height:1px;background:var(--gold);transition:width .6s cubic-bezier(.16,1,.3,1);}
+.aurg2-card:hover .aurg2-cta{color:var(--gold-bright) !important;}
+.aurg2-card:hover .aurg2-cta i{width:56px;}
+
+/* 스크롤 등장 */
+.aurg2-rv{opacity:0;transform:translateY(20px);}
+.aurg2-rv.aurg2-on{opacity:1;transform:none;transition:opacity .9s ease-out var(--dl,0s),transform .9s ease-out var(--dl,0s);}
+
+@media (min-width:640px){
+  .aurg2-root{padding:144px 0;}
+  .aurg2-in{padding:0 40px !important;}
+  .aurg2-h2{font-size:48px !important;line-height:1 !important;}
+}
+@media (min-width:768px){ .aurg2-cards{grid-template-columns:1fr 1fr;} .aurg2-card{min-height:440px;} }
+
+/* ---------- 모달 (전체 화면) ---------- */
+.aurg2-modal{position:fixed;inset:0;z-index:2147482500;display:none;flex-direction:column;background:rgba(5,5,5,.97);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);opacity:0;transition:opacity .5s ease;font-family:"Noto Serif KR",serif;color:#f5f1e6;-webkit-font-smoothing:antialiased;}
+.aurg2-modal.aurg2-show{display:flex;}
+.aurg2-modal.aurg2-vis{opacity:1;}
+.aurg2-mbar{position:relative;flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px !important;border-bottom:1px solid rgba(201,169,97,.2);}
+.aurg2-mbar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(to right,transparent,#c9a961,transparent);opacity:.7;}
+.aurg2-meye{font-size:10px !important;letter-spacing:.5em !important;color:#c9a961 !important;}
+.aurg2-mtit{margin-top:6px !important;font-size:22px !important;line-height:1.2 !important;color:#f5f1e6 !important;}
+.aurg2-mtit em{font-style:italic;color:rgba(231,200,122,.85);}
+.aurg2-x{flex:none;display:flex;width:44px;height:44px;align-items:center;justify-content:center;border:1px solid rgba(201,169,97,.4) !important;background:transparent !important;
+  color:#c9a961 !important;cursor:pointer;font-size:20px !important;line-height:1 !important;transition:all .3s;outline:none;}
+.aurg2-x:hover{background:rgba(201,169,97,.1) !important;transform:rotate(90deg);}
+.aurg2-mbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.aurg2-mbody::-webkit-scrollbar{width:6px;} .aurg2-mbody::-webkit-scrollbar-thumb{background:#8a6f3a;border-radius:3px;}
+.aurg2-mwrap{max-width:1280px;margin:0 auto !important;padding:40px 24px 64px !important;opacity:0;transform:translateY(24px);transition:opacity .8s ease .15s,transform .9s cubic-bezier(.16,1,.3,1) .15s;}
+.aurg2-modal.aurg2-vis .aurg2-mwrap{opacity:1;transform:none;}
+.aurg2-pane{display:none;} .aurg2-pane.aurg2-cur{display:block;}
+
+/* 사진 그리드 (원본 비율 그대로, 세로로 차곡차곡 쌓이는 방식) — 가로·세로·정사각 어떤 사진이든 잘리지 않음 */
+.aurg2-pgrid{column-count:1;column-gap:12px;}
+.aurg2-ph{position:relative;display:block;margin:0 0 12px !important;overflow:hidden;background:#0c0c0c;cursor:zoom-in;
+  break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;outline:1px solid rgba(201,169,97,.14);outline-offset:-1px;}
+.aurg2-ph img{display:block;width:100%;height:auto;filter:saturate(.85) brightness(.86);transition:transform 1.2s cubic-bezier(.16,1,.3,1),filter .8s;}
+.aurg2-ph::before{content:"";position:absolute;inset:10px;z-index:2;border:1px solid rgba(231,200,122,0);pointer-events:none;transition:all .6s;}
+.aurg2-ph:hover img{transform:scale(1.04);filter:saturate(1) brightness(1);}
+.aurg2-ph:hover::before{border-color:rgba(231,200,122,.5);inset:14px;}
+@media (min-width:640px){ .aurg2-pgrid{column-count:2;column-gap:16px;} .aurg2-ph{margin-bottom:16px !important;} }
+@media (min-width:1024px){ .aurg2-pgrid{column-gap:24px;} .aurg2-ph{margin-bottom:24px !important;} }
+/* 스크립트가 켜지면: 왼쪽→오른쪽 순서를 지키면서 가장 짧은 줄에 다음 사진을 놓음 (새 사진은 항상 끝에 자연스럽게 붙음) */
+.aurg2-pgrid.aurg2-mas{column-count:auto;display:flex;align-items:flex-start;gap:12px;}
+.aurg2-col{flex:1 1 0;min-width:0;}
+@media (min-width:640px){ .aurg2-pgrid.aurg2-mas{gap:16px;} }
+@media (min-width:1024px){ .aurg2-pgrid.aurg2-mas{gap:24px;} }
+
+/* 영상 목록 */
+.aurg2-vgrid{display:grid;gap:12px;}   /* 영상 사이 간격: 사진 모달과 같게 (모바일 12 / 태블릿 16 / PC 24px) */
+@media (min-width:640px){ .aurg2-vgrid{gap:16px;} }
+@media (min-width:1024px){ .aurg2-vgrid{gap:24px;} }
+.aurg2-vd{position:relative;background:#050505;}
+.aurg2-vbox{position:relative;aspect-ratio:16/9;overflow:hidden;background:#0c0c0c;cursor:pointer;outline:1px solid rgba(201,169,97,.14);outline-offset:-1px;}
+.aurg2-vbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.75) brightness(.7);transition:transform 1.2s cubic-bezier(.16,1,.3,1),filter .8s;}
+.aurg2-vbox:hover img{transform:scale(1.04);filter:saturate(.95) brightness(.8);}
+.aurg2-vbox video{position:absolute;inset:0;width:100%;height:100%;background:#000;object-fit:contain;}
+/* 썸네일 이미지 대신 영상 첫 화면(3초 지점)을 보여주는 경우 */
+.aurg2-vbox video.aurg2-vthumb{object-fit:cover;background:#0c0c0c;pointer-events:none;filter:saturate(.85) brightness(.75);}
+.aurg2-play{position:absolute;left:50%;top:50%;width:72px;height:72px;transform:translate(-50%,-50%);border:1px solid rgba(231,200,122,.7);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;transition:all .5s;background:rgba(0,0,0,.25);}
+.aurg2-play::after{content:"";margin-left:5px;border-left:14px solid #e7c87a;border-top:9px solid transparent;border-bottom:9px solid transparent;}
+.aurg2-vbox:hover .aurg2-play{width:84px;height:84px;background:rgba(201,169,97,.15);}
+@media (min-width:768px){ .aurg2-vgrid{grid-template-columns:1fr 1fr;} }
+
+/* 한 장 크게 보기 */
+.aurg2-lb{position:absolute;inset:0;z-index:5;display:none;align-items:center;justify-content:center;background:rgba(3,3,3,.96);opacity:0;transition:opacity .4s ease;}
+.aurg2-lb.aurg2-show{display:flex;} .aurg2-lb.aurg2-vis{opacity:1;}
+.aurg2-lbimg{max-width:min(1200px,88vw);max-height:76vh;object-fit:contain;border:1px solid rgba(201,169,97,.25);box-shadow:0 30px 120px rgba(201,169,97,.08);
+  opacity:0;transform:scale(.98);transition:opacity .45s ease,transform .6s cubic-bezier(.16,1,.3,1);}
+.aurg2-lbimg.aurg2-in2{opacity:1;transform:none;}
+.aurg2-lbcnt{position:absolute;left:24px;top:22px;font-size:12px !important;letter-spacing:.35em !important;color:rgba(245,241,230,.55) !important;}
+.aurg2-lbx{position:absolute;right:24px;top:16px;}
+.aurg2-arr{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border:1px solid rgba(201,169,97,.4) !important;background:rgba(0,0,0,.3) !important;
+  color:#e7c87a !important;cursor:pointer;font-size:18px !important;line-height:1 !important;transition:all .3s;outline:none;display:flex;align-items:center;justify-content:center;}
+.aurg2-arr:hover{background:rgba(201,169,97,.12) !important;}
+.aurg2-prev{left:3vw;} .aurg2-next{right:3vw;}
+html.aurg2-lock,html.aurg2-lock body{overflow:hidden !important;}
+@media (min-width:640px){ .aurg2-mbar{padding:22px 40px !important;} .aurg2-mwrap{padding:48px 40px 80px !important;} .aurg2-mtit{font-size:26px !important;} }
+@media (max-width:639px){ .aurg2-arr{width:40px;height:40px;top:auto;bottom:12vh;transform:none;} </style>
+
+<div class="aurg2-root" id="gallery">
+  <div class="aurg2-in">
+    <div class="aurg2-head">
+      <div class="aurg2-eye aurg2-kr">GALLERY</div>
+      <div class="aurg2-dash"></div>
+      <div class="aurg2-h2 aurg2-disp">기억될 여정</div>
+      <div class="aurg2-subt aurg2-kr">MOMENTS OF THE JOURNEY</div>
+    </div>
+    <div class="aurg2-lead aurg2-kr">발길 닿는 곳마다 펼쳐지는 단 하나의 프라이빗한 순간.<br>그 찬란한 기록을 전합니다.</div>
+
+    <div class="aurg2-cards">
+      <!-- 카드 1: 머무른 순간 -->
+      <button type="button" class="aurg2-card aurg2-rv" data-open="photo">
+        <span class="aurg2-no aurg2-disp">01</span>
+        <span class="aurg2-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1"><rect x="8.5" y="12.5" width="47" height="39"/><rect x="13.5" y="17.5" width="37" height="29"/><path d="M14 46l11-12 8 8 6-5 11 9"/><circle cx="41" cy="25" r="3"/></svg></span>
+        <span class="aurg2-lab aurg2-kr">PHOTO ARCHIVE</span>
+        <span class="aurg2-tit aurg2-disp">머무른 순간</span>
+        <span class="aurg2-desc aurg2-kr">유럽과 일본, 한 분 한 분의 여정이 머문 장면들을 사진으로 담았습니다.</span>
+        <span class="aurg2-cnt aurg2-disp"><span class="aurg2-pn">7</span> Moments</span>
+        <span class="aurg2-cta aurg2-kr">VIEW COLLECTION<i></i></span>
+      </button>
+      <!-- 카드 2: 흐르는 여정 -->
+      <button type="button" class="aurg2-card aurg2-rv" data-open="film" style="--dl:.12s">
+        <span class="aurg2-no aurg2-disp">02</span>
+        <span class="aurg2-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1"><circle cx="32" cy="32" r="23.5"/><circle cx="32" cy="32" r="18.5" stroke-opacity=".5"/><path d="M27 23.5v17l14-8.5z"/></svg></span>
+        <span class="aurg2-lab aurg2-kr">FILM ARCHIVE</span>
+        <span class="aurg2-tit aurg2-disp">흐르는 여정</span>
+        <span class="aurg2-desc aurg2-kr">움직이는 풍경과 그날의 공기를, 영상으로 고스란히 기록했습니다.</span>
+        <span class="aurg2-cnt aurg2-disp"><span class="aurg2-vn">4</span> Films</span>
+        <span class="aurg2-cta aurg2-kr">VIEW COLLECTION<i></i></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== 모달 (스크립트가 페이지 맨 바깥으로 옮겨요) ===== -->
+  <div class="aurg2-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="aurg2-mbar">
+      <div>
+        <div class="aurg2-meye aurg2-kr">AURUMCLUB · GALLERY</div>
+        <div class="aurg2-mtit aurg2-disp"></div>
+      </div>
+      <button type="button" class="aurg2-x aurg2-close" aria-label="닫기">×</button>
+    </div>
+    <div class="aurg2-mbody">
+      <div class="aurg2-mwrap">
+
+        <!-- 머무른 순간
+             사진 추가: 아래 <figure ...>...</figure> 한 줄을 복사해서 맨 아래에 붙이고 src 주소만 바꾸면 돼요.
+             가로·세로·정사각 등 비율은 상관없어요. 자르지 않고 원본 비율 그대로 자동으로 정렬돼요. -->
+        <div class="aurg2-pane" data-pane="photo">
+          <div class="aurg2-pgrid">
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&h=800&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://cdn.imweb.me/upload/S202611180e9cc1ff31997/4bbdfb3103890.png" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1000&h=1000&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&h=800&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1400&h=700&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=900&h=1200&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1200&h=900&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=900&h=1350&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=1200&h=800&q=80" alt=""></figure>
+            <figure class="aurg2-ph"><img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1000&h=1250&q=80" alt=""></figure>
+          </div>
+        </div>
+
+        <!-- 흐르는 여정: 영상 추가는 <div class="aurg2-vd">...</div> 한 줄 복사 → data-video에 영상(mp4) 주소, img에 대표 이미지 -->
+        <div class="aurg2-pane" data-pane="film">
+          <div class="aurg2-vgrid">
+            <div class="aurg2-vd"><div class="aurg2-vbox" data-video="https://cdn.jsdelivr.net/gh/leah0316/aurum-assets@main/talkv_high.mp4"><video class="aurg2-vthumb" src="https://cdn.jsdelivr.net/gh/leah0316/aurum-assets@main/talkv_high.mp4#t=3" muted playsinline preload="metadata" aria-hidden="true"></video><span class="aurg2-play"></span></div></div>
+            <div class="aurg2-vd"><div class="aurg2-vbox" data-video="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"><img src="https://images.unsplash.com/photo-1514890547357-a9ee288728e0?auto=format&fit=crop&w=1200&q=80" alt="" loading="lazy"><span class="aurg2-play"></span></div></div>
+            <div class="aurg2-vd"><div class="aurg2-vbox" data-video="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80" alt="" loading="lazy"><span class="aurg2-play"></span></div></div>
+            <div class="aurg2-vd"><div class="aurg2-vbox" data-video="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"><img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80" alt="" loading="lazy"><span class="aurg2-play"></span></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 한 장 크게 보기 -->
+    <div class="aurg2-lb">
+      <div class="aurg2-lbcnt aurg2-disp"></div>
+      <button type="button" class="aurg2-x aurg2-lbx" aria-label="닫기">×</button>
+      <button type="button" class="aurg2-arr aurg2-prev" aria-label="이전">‹</button>
+      <img class="aurg2-lbimg" alt="">
+      <button type="button" class="aurg2-arr aurg2-next" aria-label="다음">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){ try {
+  var root=document.querySelector('.aurg2-root:not([data-aurg2])'); if(!root) return; root.setAttribute('data-aurg2','1');
+  if(!document.getElementById('aur-fonts')){var l=document.createElement('link');l.id='aur-fonts';l.rel='stylesheet';
+    l.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Serif+KR:wght@300;400;500;600&display=swap';document.head.appendChild(l);}
+
+  var m=root.querySelector('.aurg2-modal'); document.body.appendChild(m);   /* 모달을 맨 바깥으로 */
+  var tit=m.querySelector('.aurg2-mtit'), body=m.querySelector('.aurg2-mbody');
+  var photos=[].slice.call(m.querySelectorAll('.aurg2-ph')), vids=[].slice.call(m.querySelectorAll('.aurg2-vbox'));
+  root.querySelector('.aurg2-pn').textContent=photos.length; root.querySelector('.aurg2-vn').textContent=vids.length;
+  var titles={photo:'Photo Archive · <em>'+photos.length+' Moments</em>', film:'Film Archive · <em>'+vids.length+' Films</em>'};
+  var timer;
+
+  function stopVideos(){ vids.forEach(function(b){ var v=b.querySelector('video:not(.aurg2-vthumb)'); if(v){ v.pause(); b.removeChild(v); } }); }
+  function openModal(kind){
+    clearTimeout(timer);
+    [].forEach.call(m.querySelectorAll('.aurg2-pane'),function(p){ p.classList.toggle('aurg2-cur',p.getAttribute('data-pane')===kind); });
+    tit.innerHTML=titles[kind]; body.scrollTop=0;
+    m.classList.add('aurg2-show'); m.setAttribute('aria-hidden','false'); m.getBoundingClientRect(); m.classList.add('aurg2-vis');
+    document.documentElement.classList.add('aurg2-lock');
+  }
+  function closeModal(){
+    closeLb(true); stopVideos();
+    m.classList.remove('aurg2-vis'); m.setAttribute('aria-hidden','true');
+    document.documentElement.classList.remove('aurg2-lock');
+    timer=setTimeout(function(){ m.classList.remove('aurg2-show'); },500);
+  }
+  [].forEach.call(root.querySelectorAll('.aurg2-card'),function(c){ c.addEventListener('click',function(){ c.blur(); openModal(c.getAttribute('data-open')); }); });
+  m.querySelector('.aurg2-close').addEventListener('click',closeModal);
+  m.addEventListener('click',function(e){ if(e.target===body||e.target===m) closeModal(); });   /* 바깥 여백 클릭 */
+
+  /* 한 장 크게 보기 + 좌우 넘김 */
+  var lb=m.querySelector('.aurg2-lb'), lbImg=lb.querySelector('.aurg2-lbimg'), cnt=lb.querySelector('.aurg2-lbcnt'), idx=0;
+  function pad(n){ return (n<10?'0':'')+n; }
+  function show(i){
+    idx=(i+photos.length)%photos.length; var f=photos[idx];
+    lbImg.classList.remove('aurg2-in2');
+    var src=f.querySelector('img').getAttribute('src');
+    var pre=new Image(); pre.onload=pre.onerror=function(){ lbImg.src=src; requestAnimationFrame(function(){ lbImg.classList.add('aurg2-in2'); }); }; pre.src=src;
+    cnt.textContent=pad(idx+1)+' / '+pad(photos.length);
+  }
+  function openLb(i){ lb.classList.add('aurg2-show'); lb.getBoundingClientRect(); lb.classList.add('aurg2-vis'); show(i); }
+  function closeLb(now){ if(!lb.classList.contains('aurg2-show')) return; lb.classList.remove('aurg2-vis'); setTimeout(function(){ lb.classList.remove('aurg2-show'); }, now?0:400); }
+  photos.forEach(function(f,i){ f.addEventListener('click',function(){ openLb(i); }); });
+  lb.querySelector('.aurg2-prev').addEventListener('click',function(e){ e.stopPropagation(); show(idx-1); });
+  lb.querySelector('.aurg2-next').addEventListener('click',function(e){ e.stopPropagation(); show(idx+1); });
+  lb.querySelector('.aurg2-lbx').addEventListener('click',function(e){ e.stopPropagation(); closeLb(); });
+  lb.addEventListener('click',function(e){ if(e.target===lb) closeLb(); });
+  var sx=null; lb.addEventListener('touchstart',function(e){ sx=e.touches[0].clientX; },{passive:true});
+  lb.addEventListener('touchend',function(e){ if(sx===null) return; var dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>40) show(idx+(dx<0?1:-1)); sx=null; });
+
+  /* 사진 정렬: 원본 비율을 읽어서 가장 짧은 줄에 차례로 배치 */
+  var grid=m.querySelector('.aurg2-pgrid'), lastN=0, raf=0;
+  function colsFor(){ var w=window.innerWidth; return w>=640?2:1;   /* PC·태블릿 2줄, 모바일 1줄 */ }
+  function layout(){
+    var n=colsFor(), cols=[], hs=[], i;
+    for(i=0;i<n;i++){ var c=document.createElement('div'); c.className='aurg2-col'; cols.push(c); hs.push(0); }
+    photos.forEach(function(f){
+      var im=f.querySelector('img'), r=(im.naturalWidth? im.naturalHeight/im.naturalWidth : 1);
+      var k=0; for(i=1;i<n;i++){ if(hs[i]<hs[k]-0.01) k=i; }
+      cols[k].appendChild(f); hs[k]+=r+0.06;
+    });
+    grid.innerHTML=''; cols.forEach(function(c){ grid.appendChild(c); }); grid.classList.add('aurg2-mas'); lastN=n;
+  }
+  function relayout(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(layout); }
+  photos.forEach(function(f){ var im=f.querySelector('img'); if(!im.complete) im.addEventListener('load',relayout); });
+  window.addEventListener('resize',function(){ if(colsFor()!==lastN) relayout(); });
+  layout();
+
+  /* 영상: 누르면 그 자리에서 재생 (다른 영상은 멈춤) */
+  vids.forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.querySelector('video:not(.aurg2-vthumb)')) return;
+      stopVideos();
+      var v=document.createElement('video'); v.src=b.getAttribute('data-video'); v.controls=true; v.playsInline=true; v.setAttribute('playsinline','');
+      v.setAttribute('controlsList','nodownload'); b.appendChild(v); var p=v.play(); if(p&&p.catch) p.catch(function(){});
+    });
+  });
+
+  document.addEventListener('keydown',function(e){
+    if(!m.classList.contains('aurg2-vis')) return;
+    if(e.key==='Escape'){ if(lb.classList.contains('aurg2-vis')) closeLb(); else closeModal(); }
+    if(lb.classList.contains('aurg2-vis')){ if(e.key==='ArrowLeft') show(idx-1); if(e.key==='ArrowRight') show(idx+1); }
+  });
+
+  /* 카드 스크롤 등장 */
+  var rv=root.querySelectorAll('.aurg2-rv');
+  if('IntersectionObserver' in window){ [].forEach.call(rv,function(el){ var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ el.classList.add('aurg2-on'); io.disconnect(); } }); },{rootMargin:'0px 0px -80px 0px'}); io.observe(el); }); }
+  else [].forEach.call(rv,function(el){ el.classList.add('aurg2-on'); });
+} catch(e){ if(window.console) console.warn('[aurg2] gallery', e); }
+})();
+</script>
+</body></html>
